@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EncuestaGana — Gana dinero con encuestas</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fafafa;--surface:#fff;--border:#ececec;--text:#0a0a0a;--muted:#737373;--soft:#a3a3a3;--accent:#0a0a0a;--accent-h:#262626;--ok:#16a34a;--ok-bg:#f0fdf4;--danger:#dc2626;--warn:#d97706;--warn-bg:#fffbeb;--r:12px;--rs:8px;--rl:20px;--sh:0 1px 2px rgba(0,0,0,.04);--shm:0 4px 16px rgba(0,0,0,.06);--shl:0 12px 40px rgba(0,0,0,.08)}
+html{scroll-behavior:smooth}
+body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+header{position:sticky;top:0;z-index:100;background:rgba(250,250,250,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.hi{max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;letter-spacing:-.02em;color:var(--text);text-decoration:none}
+.lm{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:.75rem;font-weight:700}
+nav.tabs{display:flex;gap:4px;background:#f0f0f0;padding:4px;border-radius:10px}
+.tab-btn{border:none;background:none;padding:8px 18px;border-radius:7px;font-size:.88rem;font-weight:500;color:var(--muted);cursor:pointer;transition:.2s;font-family:inherit}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:var(--sh);font-weight:600}
+.balance{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:.88rem;font-weight:600}
+.balance .dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.balance span.unit{color:var(--muted);font-weight:500;font-size:.82rem}
+main{flex:1;max-width:1180px;width:100%;margin:0 auto;padding:48px 32px 80px}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{margin-bottom:48px;padding-bottom:40px;border-bottom:1px solid var(--border)}
+.hero h1{font-size:clamp(1.75rem,3.5vw,2.5rem);font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:12px;max-width:640px}
+.hero p{color:var(--muted);font-size:1rem;max-width:520px;margin-bottom:32px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;max-width:640px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat strong{font-size:1.4rem;font-weight:700;letter-spacing:-.02em}
+.stat span{font-size:.8rem;color:var(--muted)}
+.filters{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.sw{flex:1;min-width:220px;position:relative}
+.sw svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--soft);pointer-events:none}
+.filters input,.filters select{width:100%;padding:11px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-size:.9rem;font-family:inherit;color:var(--text);outline:none;transition:.2s;appearance:none}
+.sw input{padding-left:42px}
+.filters input:focus,.filters select:focus{border-color:var(--text);box-shadow:0 0 0 3px rgba(10,10,10,.06)}
+.filters select{min-width:190px;flex:0 0 auto;background:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2.5' stroke-linecap='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e") no-repeat right 14px center;padding-right:38px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px;transition:.25s cubic-bezier(.4,0,.2,1)}
+.card:hover{border-color:#d4d4d4;transform:translateY(-2px);box-shadow:var(--shm)}
+.tag{font-size:.7rem;font-weight:600;color:var(--soft);text-transform:uppercase;letter-spacing:.08em}
+.card h3{font-size:.98rem;font-weight:600;line-height:1.35;letter-spacing:-.01em;flex:1}
+.meta{display:flex;align-items:center;justify-content:space-between;font-size:.83rem;color:var(--muted);padding-top:12px;border-top:1px solid var(--border)}
+.meta .min{display:inline-flex;align-items:center;gap:5px}
+.meta .min svg{color:var(--soft)}
+.reward{font-weight:700;color:var(--text);font-size:.85rem}
+.card .start{width:100%;padding:11px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:.87rem;font-weight:600;font-family:inherit;cursor:pointer;transition:.2s}
+.card .start:hover{background:var(--accent-h);transform:scale(1.01)}
+.card .start:active{transform:scale(.99)}
+.empty{grid-column:1/-1;padding:64px 24px;text-align:center;color:var(--muted);font-size:.9rem}
+.empty svg{color:var(--soft);margin-bottom:12px}
+.pagination{display:flex;justify-content:center;align-items:center;gap:4px;margin-top:40px}
+.pagination button{min-width:36px;height:36px;padding:0 10px;background:none;border:1px solid transparent;border-radius:var(--rs);font-family:inherit;font-size:.85rem;font-weight:500;color:var(--muted);cursor:pointer;transition:.2s}
+.pagination button:hover:not(:disabled){background:var(--surface);border-color:var(--border);color:var(--text)}
+.pagination button.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.pagination button:disabled{opacity:.3;cursor:default}
+.pagination .ellipsis{color:var(--soft);padding:0 4px}
+.ww{max-width:620px;margin:0 auto}
+.ww h2{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.ww>p{color:var(--muted);font-size:.92rem;margin-bottom:32px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:32px;box-shadow:var(--sh)}
+.ub{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--warn-bg);border:1px solid #fde68a;border-radius:var(--r);margin-bottom:24px;font-size:.85rem;color:#78350f}
+.ub.unlocked{background:var(--ok-bg);border-color:#bbf7d0;color:#14532d}
+.ub svg{flex-shrink:0}
+.ub .info{flex:1}
+.ub .info strong{display:block;font-weight:600;margin-bottom:2px}
+.ub .info small{font-size:.78rem;opacity:.85}
+.pbar{width:100%;height:6px;background:rgba(0,0,0,.06);border-radius:100px;overflow:hidden;margin-top:8px}
+.pbar>span{display:block;height:100%;background:var(--warn);border-radius:100px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.ub.unlocked .pbar>span{background:var(--ok)}
+.bc{padding:24px;background:var(--bg);border-radius:var(--r);text-align:center;margin-bottom:28px;border:1px solid var(--border)}
+.bc .lbl{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+.bc .amt{font-size:2.4rem;font-weight:700;letter-spacing:-.03em;margin:8px 0 4px}
+.bc .amt small{font-size:1rem;font-weight:500;color:var(--muted);margin-left:4px}
+.bc .usd{font-size:.85rem;color:var(--muted)}
+.bc .usd strong{color:var(--ok);font-weight:700}
+.ao{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.chip{position:relative;padding:14px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:.2s;text-align:left;font-family:inherit}
+.chip:hover:not(:disabled){border-color:#d4d4d4;transform:translateY(-1px);box-shadow:var(--sh)}
+.chip.selected{border-color:var(--accent);background:var(--bg)}
+.chip:disabled{opacity:.5;cursor:not-allowed;background:#fafafa}
+.chip .cv{font-size:1.05rem;font-weight:700;letter-spacing:-.01em;display:block;margin-bottom:3px}
+.chip .cp{font-size:.75rem;color:var(--muted);font-weight:500}
+.chip .ct{display:inline-block;margin-top:6px;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:4px;background:#f0f0f0;color:var(--muted)}
+.chip .ct.locked{background:#fef2f2;color:var(--danger)}
+.chip .ct.quick{background:#eff6ff;color:#1d4ed8}
+.chip .ct.main{background:#f0fdf4;color:var(--ok)}
+.chip .lock{position:absolute;top:10px;right:10px;color:var(--soft)}
+form.withdraw{display:flex;flex-direction:column;gap:16px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field label{font-size:.83rem;font-weight:500}
+.field input{padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:.92rem;color:var(--text);outline:none;transition:.2s}
+.field input:focus{border-color:var(--text);box-shadow:0 0 0 3px rgba(10,10,10,.06)}
+.field input::placeholder{color:var(--soft)}
+.field input:disabled{background:#fafafa;color:var(--soft);cursor:not-allowed}
+.btn-primary{padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-family:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:.2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover:not(:disabled){background:var(--accent-h)}
+.btn-primary:active:not(:disabled){transform:scale(.99)}
+.btn-primary:disabled{background:#d4d4d4;cursor:not-allowed;opacity:.7}
+.note{margin-top:24px;padding:14px 16px;background:#f8f8f8;border:1px solid var(--border);border-radius:var(--rs);font-size:.82rem;color:var(--muted);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.note svg{flex-shrink:0;margin-top:1px;color:var(--soft)}
+.hw{max-width:720px;margin:0 auto}
+.hw h2{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:28px}
+.hl{display:flex;flex-direction:column;gap:8px}
+.hi-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:border-color .2s}
+.hi-item:hover{border-color:#d4d4d4}
+.hi-item .info{flex:1;min-width:0}
+.hi-item .info strong{display:block;font-size:.9rem;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi-item .info small{font-size:.78rem;color:var(--soft)}
+.hi-item .val{font-weight:700;font-size:.92rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.val.pos{color:var(--ok)}
+.val.neg{color:var(--danger)}
+.he{text-align:center;padding:64px 24px;color:var(--muted);font-size:.9rem;background:var(--surface);border:1px dashed var(--border);border-radius:var(--rl)}
+.modal{display:none;position:fixed;inset:0;background:rgba(10,10,10,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;padding:24px;overflow-y:auto}
+.modal.active{display:flex;align-items:flex-start;justify-content:center}
+.mp{background:var(--surface);border-radius:var(--rl);max-width:620px;width:100%;margin:auto;box-shadow:var(--shl);animation:mi .25s cubic-bezier(.4,0,.2,1);overflow:hidden}
+@keyframes mi{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.mh{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;position:sticky;top:0;background:var(--surface);z-index:1}
+.mh h2{font-size:1.15rem;font-weight:600;letter-spacing:-.01em;line-height:1.35;margin-bottom:6px}
+.mh .meta2{display:flex;gap:14px;font-size:.8rem;color:var(--muted)}
+.mh .meta2 .reward{color:var(--ok);font-weight:700}
+.btn-x{width:32px;height:32px;border:none;background:none;border-radius:var(--rs);display:grid;place-items:center;cursor:pointer;color:var(--muted);transition:.15s;flex-shrink:0}
+.btn-x:hover{background:var(--bg);color:var(--text)}
+.mb{padding:24px 28px;max-height:calc(100vh - 240px);overflow-y:auto}
+.q{padding:20px 0;border-bottom:1px solid var(--border)}
+.q:last-of-type{border-bottom:none}
+.q p{font-size:.92rem;font-weight:500;margin-bottom:14px;line-height:1.45}
+.q .num{display:inline-block;width:20px;height:20px;background:var(--accent);color:#fff;border-radius:6px;font-size:.7rem;font-weight:700;text-align:center;line-height:20px;margin-right:8px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts label{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;font-size:.87rem;color:var(--muted);transition:.15s}
+.opts label:hover{border-color:#d4d4d4;background:var(--bg)}
+.opts input[type=radio]{appearance:none;width:16px;height:16px;border:1.5px solid #d4d4d4;border-radius:50%;cursor:pointer;flex-shrink:0;transition:.15s}
+.opts input[type=radio]:checked{border-color:var(--accent);border-width:5px}
+.opts label:has(input:checked){border-color:var(--accent);background:var(--bg);color:var(--text);font-weight:500}
+.mf{padding:20px 28px;border-top:1px solid var(--border);background:var(--surface);position:sticky;bottom:0}
+.mf button{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-family:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s}
+.mf button:hover{background:var(--accent-h)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translate(-50%,100px);background:var(--accent);color:#fff;padding:14px 22px;border-radius:100px;font-size:.87rem;font-weight:500;z-index:300;box-shadow:var(--shl);opacity:0;transition:.35s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:10px;pointer-events:none;max-width:calc(100vw - 40px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0}
+footer{border-top:1px solid var(--border);padding:24px 32px;text-align:center;font-size:.8rem;color:var(--soft)}
+@media(max-width:820px){.hi{padding:12px 20px;flex-wrap:wrap}nav.tabs{order:3;width:100%;justify-content:center}.tab-btn{flex:1;text-align:center}main{padding:32px 20px 60px}.hero{margin-bottom:32px;padding-bottom:28px}.panel{padding:24px;border-radius:var(--r)}.bc .amt{font-size:2rem}.mh,.mb,.mf{padding-left:20px;padding-right:20px}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr);gap:16px}.stat strong{font-size:1.15rem}.stat span{font-size:.72rem}.filters select{min-width:100%}.toast{bottom:16px;padding:12px 18px;font-size:.82rem}.ao{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <header>
+<div class="hi">
+<a href="#" class="logo"><span class="lm">EG</span>EncuestaGana</a>
+<nav class="tabs">
+<button class="tab-btn active" data-tab="encuestas">Encuestas</button>
+<button class="tab-btn" data-tab="retiro">Retiro</button>
+<button class="tab-btn" data-tab="historial">Historial</button>
+</nav>
+<div class="balance"><span class="dot"></span><strong id="saldoActual">0</strong><span class="unit">pts</span></div>
+</div>
+</header>
+
+<main>
+
+<section id="encuestas" class="tab-content active">
+<div class="hero">
+<h1>Gana dinero respondiendo encuestas.</h1>
+<p>Completa encuestas de 8–9 minutos, acumula puntos y retíralos directamente a tu cuenta de PayPal.</p>
+<div class="stats">
+<div class="stat"><strong id="totalEncuestas">200</strong><span>Encuestas disponibles</span></div>
+<div class="stat"><strong>8–9 min</strong><span>Duración promedio</span></div>
+<div class="stat"><strong>5–20 pts</strong><span>Recompensa por encuesta</span></div>
+</div>
+</div>
+
+<div class="filters">
+<div class="sw">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+<input type="text" id="buscador" placeholder="Buscar encuestas...">
+</div>
+<select id="filtroPuntos">
+<option value="todas">Todas las recompensas</option>
+<option value="20">20 puntos</option>
+<option value="15">15 puntos</option>
+<option value="5">5 puntos</option>
+</select>
+</div>
+
+<div id="listaEncuestas" class="grid"></div>
+<div class="pagination" id="paginacion"></div>
+</section>
+
+<section id="retiro" class="tab-content">
+<div class="ww">
+<h2>Retirar fondos</h2>
+<p>Introduce tu correo de PayPal y elige el monto que deseas retirar.</p>
+<div class="panel">
+
+<div class="ub" id="unlockBanner">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+<div class="info">
+<strong id="unlockTitle">Retiro bloqueado</strong>
+<small id="unlockSubtitle">Completa 70 encuestas para desbloquear los retiros vía PayPal</small>
+<div class="pbar"><span id="unlockProgress" style="width:0%"></span></div>
+</div>
+</div>
+
+<div class="bc">
+<div class="lbl">Saldo disponible</div>
+<div class="amt"><span id="saldoRetiro">0</span><small>pts</small></div>
+<div class="usd">Equivalente a <strong>$<span id="saldoUSD">0.00</span> USD</strong></div>
+</div>
+
+<div class="ao" id="amountOptions"></div>
+
+<form class="withdraw" id="formRetiro">
+<div class="field">
+<label for="emailPaypal">Correo de PayPal</label>
+<input type="email" id="emailPaypal" placeholder="tu-correo@ejemplo.com" required>
+</div>
+<div class="field">
+<label for="montoRetiro">Monto a retirar (USD)</label>
+<input type="number" id="montoRetiro" min="20" max="100" step="0.01" placeholder="20.00" required>
+</div>
+<button type="submit" class="btn-primary" id="btnRetirar">Solicitar retiro</button>
+</form>
+
+<div class="note">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+<span><strong>Reglas de retiro:</strong><br>
+• Retiro mínimo: <strong>$20 USD</strong> (4,000 pts)<br>
+• Retiro máximo: <strong>$100 USD</strong> (20,000 pts)<br>
+• Conversión: <strong>20 pts = $0.10 USD</strong> → 200 pts = $1.00<br>
+• Retiros desbloqueados al completar <strong>70 encuestas</strong><br>
+• Los pagos se procesan en 24–48 horas hábiles.</span>
+</div>
+</div>
+</div>
+</section>
+
+<section id="historial" class="tab-content">
+<div class="hw">
+<h2>Historial de actividad</h2>
+<div id="listaHistorial" class="hl"></div>
+</div>
+</section>
+
+</main>
+
+<footer>© 2025 EncuestaGana — Todos los derechos reservados.</footer>
+
+<div id="modalEncuesta" class="modal">
+<div class="mp">
+<div class="mh">
+<div>
+<h2 id="tituloEncuesta"></h2>
+<div class="meta2"><span id="duracionEncuesta"></span><span class="reward" id="puntosEncuesta"></span></div>
+</div>
+<button class="btn-x" onclick="cerrarModal()" aria-label="Cerrar">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+</button>
+</div>
+<form id="formEncuesta">
+<div class="mb" id="preguntasContainer"></div>
+<div class="mf"><button type="submit">Enviar respuestas y ganar puntos</button></div>
+</form>
+</div>
+</div>
+
+<div id="notificacion" class="toast"><span class="dot"></span><span id="toastMsg"></span></div>
+
+<script>
+const PTS_POR_USD=200,MIN_USD=20,MAX_USD=100,MIN_PTS=MIN_USD*PTS_POR_USD,QUICK_PTS=200,DESBLOQUEO=70;
+const ptsToUSD=p=>(p/PTS_POR_USD).toFixed(2);
+const usdToPts=u=>Math.round(u*PTS_POR_USD);
+const fmt=n=>n.toLocaleString('es-ES');
+const CATS=["Tecnología","Salud","Comida","Viajes","Deportes","Entretenimiento","Moda","Finanzas","Educación","Hogar","Automóviles","Mascotas","Música","Videojuegos","Política"];
+const TIT=["Opinión sobre {t}","Hábitos de consumo en {t}","Satisfacción con servicios de {t}","Preferencias en {t}","Tendencias actuales en {t}","Experiencia de usuario en {t}","Estudio de mercado sobre {t}","Uso de tecnología en {t}","Influencia publicitaria en {t}","Estilo de vida y {t}"];
+const TEMAS={"Tecnología":["smartphones","laptops","apps móviles","smartwatches","auriculares"],"Salud":["suplementos","gimnasios","telemedicina","nutrición","bienestar mental"],"Comida":["comida rápida","restaurantes","delivery","comida vegana","snacks"],"Viajes":["vuelos","hoteles","Airbnb","tours","cruceros"],"Deportes":["fútbol","running","ciclismo","gimnasio","yoga"],"Entretenimiento":["streaming","cines","conciertos","podcasts","series"],"Moda":["ropa deportiva","calzado","accesorios","marcas de lujo","sostenibilidad"],"Finanzas":["bancos digitales","criptomonedas","inversiones","seguros","tarjetas"],"Educación":["cursos online","apps educativas","universidades","idiomas","tutorías"],"Hogar":["electrodomésticos","muebles","limpieza","decoración","jardinería"],"Automóviles":["coches eléctricos","SUVs","seguros de auto","mantenimiento","alquiler"],"Mascotas":["alimento para perros","veterinarios","accesorios","gatos","adiestramiento"],"Música":["Spotify","conciertos","instrumentos","audífonos","géneros musicales"],"Videojuegos":["consolas","juegos móviles","eSports","realidad virtual","PC gaming"],"Política":["noticias","redes sociales","participación ciudadana","debates","encuestas electorales"]};
+const PREGS=[{t:"¿Con qué frecuencia usas este producto o servicio?",o:["Nunca","Rara vez","A veces","Frecuentemente","Diariamente"]},{t:"¿Cuál es tu nivel de satisfacción general?",o:["Muy insatisfecho","Insatisfecho","Neutral","Satisfecho","Muy satisfecho"]},{t:"¿Recomendarías esto a un amigo o familiar?",o:["Definitivamente no","Probablemente no","Tal vez","Probablemente sí","Definitivamente sí"]},{t:"¿Cuánto estarías dispuesto a pagar por ello?",o:["Menos de $10","$10 – $30","$30 – $60","$60 – $100","Más de $100"]},{t:"¿Qué factor es más importante para ti al elegir?",o:["Precio","Calidad","Marca","Disponibilidad","Opiniones de otros"]},{t:"¿Cuál es tu rango de edad?",o:["18 – 24","25 – 34","35 – 44","45 – 54","55 o más"]},{t:"¿Dónde sueles adquirir este producto o servicio?",o:["Tienda física","Online","App móvil","Marketplace","Directo al fabricante"]},{t:"¿Qué tan probable es que lo adquieras en los próximos 3 meses?",o:["Muy improbable","Improbable","Neutral","Probable","Muy probable"]}];
+function genEncuesta(id){const cat=CATS[id%CATS.length];const tema=TEMAS[cat][(id*7)%5];const titulo=TIT[(id*3)%TIT.length].replace("{t}",tema);const dur=8+(id%2);const pts=dur===8?((id%3===0)?15:5):((id%2===0)?20:15);const n=4+(id%3);const preguntas=[];for(let i=0;i<n;i++)preguntas.push(PREGS[(id+i*3)%PREGS.length]);return{id,titulo,categoria:cat,duracion:dur,puntos:pts,preguntas};}
+const ENCUESTAS=Array.from({length:200},(_,i)=>genEncuesta(i+1));
+let saldo=parseInt(localStorage.getItem('eg_saldo')||'0',10);
+let completadas=JSON.parse(localStorage.getItem('eg_completadas')||'[]');
+let historial=JSON.parse(localStorage.getItem('eg_historial')||'[]');
+let pagina=1,POR_PAG=12,encActual=null,montoSel=null;
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');if(b.dataset.tab==='retiro')actualizarRetiroUI();}));
+function actualizarSaldo(){document.getElementById('saldoActual').textContent=fmt(saldo);document.getElementById('saldoRetiro').textContent=fmt(saldo);document.getElementById('saldoUSD').textContent=ptsToUSD(saldo);localStorage.setItem('eg_saldo',saldo);}
+function renderEncuestas(filtro='',fp='todas'){const cont=document.getElementById('listaEncuestas');let lista=ENCUESTAS.filter(e=>!completadas.includes(e.id));if(filtro){const f=filtro.toLowerCase();lista=lista.filter(e=>e.titulo.toLowerCase().includes(f)||e.categoria.toLowerCase().includes(f));}if(fp!=='todas')lista=lista.filter(e=>e.puntos===parseInt(fp,10));const total=Math.ceil(lista.length/POR_PAG)||1;if(pagina>total)pagina=1;const vis=lista.slice((pagina-1)*POR_PAG,pagina*POR_PAG);if(!vis.length){cont.innerHTML=`<div class="empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><p>No hay encuestas que coincidan con tu búsqueda.</p></div>`;}else{cont.innerHTML=vis.map(e=>`<article class="card"><span class="tag">${e.categoria}</span><h3>${e.titulo}</h3><div class="meta"><span class="min"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${e.duracion} min</span><span class="reward">+${e.puntos} pts</span></div><button class="start" onclick="abrirEncuesta(${e.id})">Iniciar encuesta</button></article>`).join('');}renderPaginacion(total);}
+function renderPaginacion(total){const cont=document.getElementById('paginacion');if(total<=1){cont.innerHTML='';return;}let h=`<button ${pagina===1?'disabled':''} onclick="irPagina(${pagina-1})">‹</button>`;for(let i=1;i<=total;i++){if(i===1||i===total||Math.abs(i-pagina)<=1)h+=`<button class="${i===pagina?'active':''}" onclick="irPagina(${i})">${i}</button>`;else if(Math.abs(i-pagina)===2)h+=`<span class="ellipsis">…</span>`;}h+=`<button ${pagina===total?'disabled':''} onclick="irPagina(${pagina+1})">›</button>`;cont.innerHTML=h;}
+function irPagina(p){pagina=p;renderEncuestas(document.getElementById('buscador').value,document.getElementById('filtroPuntos').value);window.scrollTo({top:0,behavior:'smooth'});}
+function abrirEncuesta(id){const enc=ENCUESTAS.find(e=>e.id===id);if(!enc)return;encActual=enc;document.getElementById('tituloEncuesta').textContent=enc.titulo;document.getElementById('duracionEncuesta').textContent=`${enc.duracion} min`;document.getElementById('puntosEncuesta').textContent=`+${enc.puntos} pts`;document.getElementById('preguntasContainer').innerHTML=enc.preguntas.map((p,i)=>`<div class="q"><p><span class="num">${i+1}</span>${p.t}</p><div class="opts">${p.o.map(o=>`<label><input type="radio" name="p${i}" value="${o}" required><span>${o}</span></label>`).join('')}</div></div>`).join('');document.getElementById('modalEncuesta').classList.add('active');document.body.style.overflow='hidden';}
+function cerrarModal(){document.getElementById('modalEncuesta').classList.remove('active');document.getElementById('formEncuesta').reset();document.body.style.overflow='';encActual=null;}
+document.getElementById('modalEncuesta').addEventListener('click',e=>{if(e.target.id==='modalEncuesta')cerrarModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('modalEncuesta').classList.contains('active'))cerrarModal();});
+document.getElementById('formEncuesta').addEventListener('submit',e=>{e.preventDefault();if(!encActual)return;const pts=encActual.puntos,tit=encActual.titulo;saldo+=pts;completadas.push(encActual.id);historial.unshift({tipo:'encuesta',descripcion:`Encuesta: ${tit}`,puntos:pts,fecha:new Date().toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'})});localStorage.setItem('eg_completadas',JSON.stringify(completadas));localStorage.setItem('eg_historial',JSON.stringify(historial));toast(`+${pts} puntos añadidos a tu saldo`);cerrarModal();actualizarSaldo();renderEncuestas(document.getElementById('buscador').value,document.getElementById('filtroPuntos').value);renderHistorial();actualizarRetiroUI();});
+const desbloqueado=()=>completadas.length>=DESBLOQUEO;
+function actualizarRetiroUI(){const d=desbloqueado(),c=completadas.length;const banner=document.getElementById('unlockBanner');const pct=Math.min(100,(c/DESBLOQUEO)*100);document.getElementById('unlockProgress').style.width=pct+'%';if(d){banner.classList.add('unlocked');document.getElementById('unlockTitle').textContent='✓ Retiros desbloqueados';document.getElementById('unlockSubtitle').textContent=`Has completado ${c} encuestas. Ya puedes retirar a PayPal.`;}else{banner.classList.remove('unlocked');document.getElementById('unlockTitle').textContent=`Retiro bloqueado — ${c}/${DESBLOQUEO} encuestas`;document.getElementById('unlockSubtitle').textContent=`Te faltan ${DESBLOQUEO-c} encuestas para desbloquear los retiros vía PayPal`;}renderChips();const email=document.getElementById('emailPaypal'),monto=document.getElementById('montoRetiro'),btn=document.getElementById('btnRetirar');email.disabled=!d;monto.disabled=!d;btn.disabled=!d;btn.textContent=d?'Solicitar retiro':'Retiro bloqueado (70 encuestas)';}
+function renderChips(){const cont=document.getElementById('amountOptions');const d=desbloqueado();const opciones=[{usd:1,pts:QUICK_PTS,tag:'Rápido',cls:'quick',locked:!d},{usd:20,pts:usdToPts(20),tag:'Mínimo',cls:'main',locked:false},{usd:50,pts:usdToPts(50),tag:'Popular',cls:'main',locked:false},{usd:100,pts:usdToPts(100),tag:'Máximo',cls:'main',locked:false}];cont.innerHTML=opciones.map(o=>`<button type="button" class="chip" data-usd="${o.usd}" ${o.locked?'disabled':''}>${o.locked?'<svg class="lock" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>':''}<span class="cv">$${o.usd} USD</span><span class="cp">${fmt(o.pts)} pts</span><span class="ct ${o.locked?'locked':o.cls}">${o.locked?'Bloqueado':o.tag}</span></button>`).join('');cont.querySelectorAll('.chip:not(:disabled)').forEach(chip=>chip.addEventListener('click',()=>{cont.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));chip.classList.add('selected');montoSel=parseFloat(chip.dataset.usd);document.getElementById('montoRetiro').value=montoSel.toFixed(2);}));}
+document.getElementById('formRetiro').addEventListener('submit',e=>{e.preventDefault();if(!desbloqueado())return toast(`Completa ${DESBLOQUEO} encuestas para desbloquear retiros`,'error');const email=document.getElementById('emailPaypal').value.trim();const usd=parseFloat(document.getElementById('montoRetiro').value);if(!email.includes('@')||!email.includes('.'))return toast('Introduce un correo de PayPal válido','error');if(isNaN(usd)||usd<MIN_USD)return toast(`El retiro mínimo es $${MIN_USD} USD`,'error');if(usd>MAX_USD)return toast(`El retiro máximo es $${MAX_USD} USD`,'error');const pts=usdToPts(usd);if(pts>saldo)return toast(`Necesitas ${fmt(pts)} pts (tienes ${fmt(saldo)})`,'error');saldo-=pts;historial.unshift({tipo:'retiro',descripcion:`Retiro a PayPal · $${usd.toFixed(2)} USD · ${email}`,puntos:-pts,fecha:new Date().toLocaleString('es-ES',{dateStyle:'medium',timeStyle:'short'})});localStorage.setItem('eg_historial',JSON.stringify(historial));actualizarSaldo();renderHistorial();actualizarRetiroUI();document.getElementById('formRetiro').reset();document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));montoSel=null;toast(`Retiro de $${usd.toFixed(2)} USD solicitado a ${email}`);});
+function renderHistorial(){const cont=document.getElementById('listaHistorial');if(!historial.length){cont.innerHTML='<div class="he">Aún no tienes actividad registrada.<br>Completa tu primera encuesta para empezar.</div>';return;}cont.innerHTML=historial.map(h=>`<div class="hi-item"><div class="info"><strong>${h.descripcion}</strong><small>${h.fecha}</small></div><span class="val ${h.puntos>0?'pos':'neg'}">${h.puntos>0?'+':''}${fmt(h.puntos)} pts</span></div>`).join('');}
+let tt=null;
+function toast(msg,tipo='ok'){const t=document.getElementById('notificacion');document.getElementById('toastMsg').textContent=msg;t.querySelector('.dot').style.background=tipo==='error'?'#ef4444':'#4ade80';t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3400);}
+document.getElementById('buscador').addEventListener('input',e=>{pagina=1;renderEncuestas(e.target.value,document.getElementById('filtroPuntos').value);});
+document.getElementById('filtroPuntos').addEventListener('change',e=>{pagina=1;renderEncuestas(document.getElementById('buscador').value,e.target.value);});
+actualizarSaldo();
+renderEncuestas();
+renderHistorial();
+actualizarRetiroUI();
+</script>
+</body>
+  </html>
+  
+  
